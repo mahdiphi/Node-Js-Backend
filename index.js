@@ -10,6 +10,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
+app.use(logger);
+
 app.use("/api/users", usersRoute);
 app.use("/api/todos", todosRoute);
 app.use("/api/sessions", sessionsRoute);
@@ -20,7 +22,6 @@ app.get("/", (req, res) => {
 });
 
 
-app.use(logger);
 app.use(errorHandler);
 
 app.use((req, res) => {
