@@ -1,20 +1,22 @@
-let { todos } = require("../data/users-data");
+const Todo = require("../models/Todos-model");
 
-const getTodos = (req, res) => {
+const getTodos = async (req, res) => {
   try {
-    res.status(200).json(todos);
+    const todo = await Todo.find({});
+    res.status(200).json(todo);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-const getTodo = (req, res) => {
+const getTodo = async (req, res) => {
   try {
-    const {id} = req.params;
-    const todoId = parseInt(id, 10)
-    const todo = todos.find((t) => t.id === todoId);
-    if (!todo) return res.status(404).json({ message: "Todo not found" });
-    res.json(todo);
+    const { id } = req.params;
+    const todo = await Todo.findById(id);
+    if (!todo) {
+      return res.status(404).json({ message: "Todo not found!" });
+    }
+    res.status(200).json(todo);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -22,39 +24,39 @@ const getTodo = (req, res) => {
 
 const createTodos = async (req, res) => {
   try {
-    const newTodo = { id: todos.length + 1, ...req.body };
-    todos.push(newTodo);
-    res.status(201).json(newTodo);
+    const todo = await Todo.create(req.body);
+    res.status(200).json(todo);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-const updateTodos = (req, res) => {
+const updateTodos = async (req, res) => {
   try {
     const { id } = req.params;
-    const todoId = parseInt(id, 10);
-    let { city, population } = req.body;
-    todos = todos.map((todo) => {
-      return todo.id === todoId
-        ? { ...todo, city: city, population: population }
-        : todo;
-    });
+    const todo = await Todo.findByIdAndUpdate(id, req.body);
 
-    res.status(200).json(todos);
+    if (!todo) {
+      return res.status(404).json({ message: "Todo not found!" });
+    }
+
+    const updatedTodo = await Todo.findById(id);
+    res.status(200).json(updatedTodo);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-const deleteTodos = (req, res) => {
+const deleteTodos = async (req, res) => {
   try {
     const { id } = req.params;
-    const todoId = parseInt(id, 10);
+    const todo = await Todo.findByIdAndDelete(id);
 
-    todos = todos.filter((todo) => todo.id !== todoId);
+    if (!todo) {
+      return res.status(404).json({ message: "Todo not found!" });
+    }
 
-    res.status(200).json(todos);
+    res.status(200).json({ message: "Todo deleted succesfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
