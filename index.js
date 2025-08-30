@@ -3,7 +3,7 @@ require("dotenv").config();
 const mongoose = require("mongoose")
 const usersRoute = require("./routes/users-route.js");
 const todosRoute = require("./routes/todos-route.js");
-// const sessionsRoute = require("./routes/sessions-route.js");
+const authRoute = require("./routes/auth-route.js")
 const logger = require("./middlewares/logger.js");
 const errorHandler = require("./middlewares/errorHandler.js");
 
@@ -29,9 +29,9 @@ mongoose.connect(`mongodb+srv://${username}:${password}@testbackend.oedpvy9.mong
 })
 app.use(logger);
 
+app.use("/api/auth", authRoute)
 app.use("/api/users", usersRoute);
 app.use("/api/todos", todosRoute);
-// app.use("/api/sessions", sessionsRoute);
 
 
 app.get("/", (req, res) => {
