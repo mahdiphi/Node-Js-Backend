@@ -8,8 +8,7 @@ module.exports = async (req, res, next) => {
     if (!token) return res.status(401).json({ message: "Access denied" });
 
     const decode = Jwt.verify(token, process.env.SECRET_KEY)
-    req.userData = decode
-    console.log(req)
+    req.user = decode
     next()
   } catch (error) {
     res.status(400).json({ message: "token in invalid!" });

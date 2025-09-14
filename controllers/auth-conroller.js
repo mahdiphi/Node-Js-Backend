@@ -23,7 +23,7 @@ const signup = async (req, res) => {
   
   const user = new User(req.body);
   await user.save();
-  const token = jwt.sign({ id: user.id }, process.env.SECRET_KEY);
+  const token = jwt.sign({ id: user.id, role: user.role }, process.env.SECRET_KEY, {expiresIn: "15m"});
   res
     .header("Authorization", token)
     .status(201)
@@ -46,7 +46,7 @@ const login = async (req, res) => {
   if (!validPassword)
     return res.status(400).json({ message: "Email or password is invalid!" });
 
-  const token = jwt.sign({id: user.id}, process.env.SECRET_KEY)
+  const token = jwt.sign({id: user.id, role: user.role}, process.env.SECRET_KEY, {expiresIn: "15m"})
   res.status(200).json(token)
 };
 
