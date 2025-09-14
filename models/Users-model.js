@@ -13,17 +13,14 @@ const UserSchema = mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    role: {
+        type: String,
+        enum: ["user", "admin"],
+        default: "user"
     }
 })
 
-UserSchema.methods.checkEmailExist = async function() {
-    const user = await mongoose.model("User").findOne({email: this.email})
-
-    if(user){
-        return true
-    }
-    return false
-}
 
 UserSchema.pre("save", async function(next) {
     if(!this.isModified('password')) return next()

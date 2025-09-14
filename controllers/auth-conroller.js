@@ -2,6 +2,7 @@ const Joi = require("joi");
 const _ = require("lodash");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const User = require("../models/Users-model")
 
 const signup = async (req, res) => {
   const schema = Joi.object({
@@ -15,13 +16,12 @@ const signup = async (req, res) => {
   const { error } = schema.validate(req.body);
   if (error) return res.status(400).json({ message: error.details[0].message });
 
-  const user = new User(req.body);
-  const emailExists = await user.checkEmailExist();
-
+  const emailExists = await User.findOne({email: req.body.email})
   if (emailExists) {
     return res.status(400).json({ message: "User is already registered" });
   }
-
+  
+  const user = new User(req.body);
   await user.save();
   const token = jwt.sign({ id: user.id }, process.env.SECRET_KEY);
   res
